@@ -15,7 +15,22 @@
  *                   dp[i-1][j-1] + SUBS_COST  )        (substitution)
  */
 
-const INS_DEL_COST = 1;
+/**
+ * Escape a string so it is safe to embed in HTML content or attributes.
+ * Replaces &, <, >, ", and ' with their HTML entity equivalents.
+ * @param {string} str
+ * @returns {string}
+ */
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+
 const SUBS_COST    = 2;
 
 /**

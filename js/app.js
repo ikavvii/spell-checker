@@ -32,7 +32,7 @@ function initSpellChecker() {
     if (DICTIONARY.includes(lower)) {
       resultsDiv.innerHTML = `
         <div class="sc-exact">
-          ✅ <strong>${typed}</strong> is spelled correctly!
+          ✅ <strong>${escapeHtml(typed)}</strong> is spelled correctly!
         </div>`;
       return;
     }
@@ -48,12 +48,12 @@ function initSpellChecker() {
       const badgeClass = idx === 0 ? "badge-best" : "badge-other";
       html += `
         <li class="suggestion-item">
-          <span class="suggestion-word">${s.word}</span>
+          <span class="suggestion-word">${escapeHtml(s.word)}</span>
           <span class="suggestion-distance badge ${badgeClass}">
             edit distance: ${s.distance}
           </span>
           <button class="viz-link-btn"
-            data-typed="${lower}" data-target="${s.word}"
+            data-typed="${escapeHtml(lower)}" data-target="${escapeHtml(s.word)}"
             title="Visualize DP matrix for this pair">
             📊 Visualize
           </button>

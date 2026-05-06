@@ -58,7 +58,7 @@ const VIZ = (() => {
     let html = "<table class='dp-table'><thead><tr>";
     html += "<th></th><th class='hdr-char'><span>\u201C\u201D</span></th>";
     for (const ch of targetWord) {
-      html += `<th class='hdr-char'><span>${ch}</span></th>`;
+      html += `<th class='hdr-char'><span>${escapeHtml(ch)}</span></th>`;
     }
     html += "</tr></thead><tbody>";
 
@@ -67,15 +67,16 @@ const VIZ = (() => {
       if (i === 0) {
         html += "<td class='hdr-char'><span>\u201C\u201D</span></td>";
       } else {
-        html += `<td class='hdr-char'><span>${typedWord[i - 1]}</span></td>`;
+        html += `<td class='hdr-char'><span>${escapeHtml(typedWord[i - 1])}</span></td>`;
       }
       for (let j = 0; j <= n; j++) {
-        const cls   = classForCell(i, j, pathSet);
-        const tip   = opLabel(i, j);
-        const id    = `cell-${i}-${j}`;
-        html += `<td id="${id}" class="dp-cell ${cls}" data-tip="${tip}">
+        const cls      = classForCell(i, j, pathSet);
+        const tipRaw   = opLabel(i, j);
+        const tipSafe  = escapeHtml(tipRaw);
+        const id       = `cell-${i}-${j}`;
+        html += `<td id="${id}" class="dp-cell ${cls}" data-tip="${tipSafe}">
                    <span class="cell-val">?</span>
-                   ${tip ? `<span class="cell-op">${tip}</span>` : ""}
+                   ${tipRaw ? `<span class="cell-op">${tipSafe}</span>` : ""}
                  </td>`;
       }
       html += "</tr>";
