@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Intelligent Spell-Checker | Dynamic Programming</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+<!-- ── Header ─────────────────────────────────────────────── -->
+<header>
+  <div class="header-inner">
+    <div class="header-title">
+      <h1>🔤 Intelligent Spell-Checker</h1>
+      <span class="badge-algo">DP · Edit Distance</span>
+    </div>
+    <nav aria-label="Main navigation">
+      <button class="nav-btn active" data-section="checker-section">
+        ✏️ Spell Checker
+      </button>
+      <button class="nav-btn" data-section="viz-section">
+        📊 DP Visualizer
+      </button>
+      <button class="nav-btn" data-section="slides-section">
+        🖥️ Slides
+      </button>
+    </nav>
+  </div>
+</header>
+
+<!-- ── Main ───────────────────────────────────────────────── -->
+<main>
+
+  <!-- ════════════════════════════════════════════════════════
+       Section 1 : Spell Checker
+       ════════════════════════════════════════════════════════ -->
+  <section id="checker-section" class="section active" aria-label="Spell Checker">
+    <div class="section-header">
+      <h2>Live Spell Checker</h2>
+      <p>
+        Finds the closest dictionary words using
+        <strong>Minimum Edit Distance</strong> (Levenshtein DP).<br />
+        <em>Insertion = 1 · Deletion = 1 · Substitution = 2</em>
+      </p>
+    </div>
+
+    <div class="card">
+      <div class="sc-input-row">
+        <input
+          id="sc-input"
+          type="text"
+          placeholder="Type a word, e.g.  algorythm"
+          autocomplete="off"
+          autocorrect="off"
+          spellcheck="false"
+          aria-label="Word to check"
+        />
+        <div class="sc-actions">
+          <button id="sc-btn" class="btn-primary">Check Spelling</button>
+          <button id="sc-clear" class="btn-secondary">Clear</button>
+        </div>
+      </div>
+
+      <!-- example chips -->
+      <div class="example-chips" role="group" aria-label="Example words">
+        <span>Try:</span>
+        <button class="example-chip" data-word="algorythm">algorythm</button>
+        <button class="example-chip" data-word="recieve">recieve</button>
+        <button class="example-chip" data-word="definately">definately</button>
+        <button class="example-chip" data-word="programm">programm</button>
+        <button class="example-chip" data-word="seqence">seqence</button>
+        <button class="example-chip" data-word="matix">matix</button>
+        <button class="example-chip" data-word="dynamik">dynamik</button>
+        <button class="example-chip" data-word="fuction">fuction</button>
+      </div>
+
+      <!-- results -->
+      <div id="sc-results" aria-live="polite">
+        <p class="sc-hint">Type a word above and click <strong>Check Spelling</strong>.</p>
+      </div>
+    </div>
+
+    <!-- algorithm description card -->
+    <div class="card" style="margin-top:1.5rem;">
+      <h3 style="margin-bottom:1rem;font-size:1.1rem;">How it works</h3>
+      <ol style="padding-left:1.4rem;line-height:2;">
+        <li>The typed word is compared against every word in the dictionary.</li>
+        <li>For each pair, a DP matrix of size <code>(m+1)×(n+1)</code> is computed.</li>
+        <li>
+          Each cell <code>dp[i][j]</code> = minimum cost to transform the first
+          <em>i</em> characters of the typed word into the first <em>j</em>
+          characters of the dictionary word.
+        </li>
+        <li>
+          Bottom-right cell = total edit distance.
+          The dictionary word with the <strong>lowest distance</strong> is the
+          best suggestion.
+        </li>
+      </ol>
+      <div style="margin-top:1rem;padding:1rem;background:var(--clr-surface2);
+                  border-radius:8px;font-family:monospace;font-size:.85rem;
+                  color:var(--clr-muted);line-height:1.9;">
+        <span style="color:var(--clr-accent2);">dp[i][j]</span> =
+          <span style="color:var(--cell-match-fg);">dp[i-1][j-1]</span>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <em>if s[i-1] == t[j-1]  (match — free)</em><br/>
+        <span style="color:var(--clr-accent2);">dp[i][j]</span> = min(
+          <span style="color:var(--cell-edit-fg);">dp[i-1][j] + 1</span>,&nbsp;
+          <span style="color:var(--clr-warn);">dp[i][j-1] + 1</span>,&nbsp;
+          <span style="color:var(--clr-danger);">dp[i-1][j-1] + 2</span>)
+          &nbsp;
+          <em>otherwise</em>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════
+       Section 2 : DP Visualizer
+       ════════════════════════════════════════════════════════ -->
+  <section id="viz-section" class="section" aria-label="DP Table Visualizer">
+    <div class="section-header">
+      <h2>DP Table Visualizer</h2>
+      <p>
+        Watch the edit-distance matrix fill in cell-by-cell.
+        The <span style="color:var(--clr-accent);">highlighted path</span>
+        is the optimal backtracked edit sequence.
+      </p>
+    </div>
+
+    <div class="card">
+      <!-- inputs -->
+      <div class="viz-input-row">
+        <div class="viz-field">
+          <label for="viz-word-s">Typed word (source)</label>
+          <input id="viz-word-s" type="text" placeholder="e.g. algorythm"
+                 autocomplete="off" spellcheck="false" />
+        </div>
+        <div class="viz-field">
+          <label for="viz-word-t">Target word (dictionary)</label>
+          <input id="viz-word-t" type="text" placeholder="e.g. algorithm"
+                 autocomplete="off" spellcheck="false" />
+        </div>
+        <div style="display:flex;gap:.5rem;align-items:flex-end;">
+          <button id="btn-visualize" class="btn-primary">▶ Visualize</button>
+          <button id="btn-skip-anim" class="btn-secondary">⏭ Skip</button>
+        </div>
+      </div>
+
+      <!-- example pair chips -->
+      <div class="viz-chips">
+        <span style="color:var(--clr-muted);font-size:.82rem;">Examples:</span>
+        <button class="viz-chip" data-s="algy"       data-t="algo">algy → algo</button>
+        <button class="viz-chip" data-s="algorythm"  data-t="algorithm">algorythm → algorithm</button>
+        <button class="viz-chip" data-s="kitten"     data-t="sitting">kitten → sitting</button>
+        <button class="viz-chip" data-s="sunday"     data-t="saturday">sunday → saturday</button>
+        <button class="viz-chip" data-s="recieve"    data-t="receive">recieve → receive</button>
+      </div>
+
+      <!-- legend -->
+      <div class="dp-legend" role="list" aria-label="Cell colour legend">
+        <div class="legend-item" role="listitem">
+          <span class="legend-swatch swatch-base"></span> Base case
+        </div>
+        <div class="legend-item" role="listitem">
+          <span class="legend-swatch swatch-match"></span> Match (free)
+        </div>
+        <div class="legend-item" role="listitem">
+          <span class="legend-swatch swatch-edit"></span> Ins / Del / Sub
+        </div>
+        <div class="legend-item" role="listitem">
+          <span class="legend-swatch swatch-path"></span> Optimal path
+        </div>
+      </div>
+
+      <!-- DP matrix renders here -->
+      <div id="dp-table-wrap" role="region" aria-label="DP matrix table"></div>
+
+      <!-- stats bar -->
+      <div id="viz-stats" role="status" aria-live="polite"></div>
+    </div>
+
+    <!-- operation cost reminder -->
+    <div class="card" style="margin-top:1.5rem;">
+      <h3 style="margin-bottom:.75rem;font-size:1rem;">Operation costs</h3>
+      <div style="display:flex;gap:1rem;flex-wrap:wrap;">
+        <div style="display:flex;align-items:center;gap:.5rem;
+                    background:rgba(76,175,130,.1);border:1px solid var(--clr-success);
+                    border-radius:8px;padding:.5rem 1rem;">
+          <span style="font-size:1.2rem;">➕</span>
+          <span><strong>Insertion</strong> — cost <strong style="color:var(--clr-success);">1</strong></span>
+        </div>
+        <div style="display:flex;align-items:center;gap:.5rem;
+                    background:rgba(245,166,35,.1);border:1px solid var(--clr-warn);
+                    border-radius:8px;padding:.5rem 1rem;">
+          <span style="font-size:1.2rem;">➖</span>
+          <span><strong>Deletion</strong> — cost <strong style="color:var(--clr-warn);">1</strong></span>
+        </div>
+        <div style="display:flex;align-items:center;gap:.5rem;
+                    background:rgba(224,92,92,.1);border:1px solid var(--clr-danger);
+                    border-radius:8px;padding:.5rem 1rem;">
+          <span style="font-size:1.2rem;">🔁</span>
+          <span><strong>Substitution</strong> — cost <strong style="color:var(--clr-danger);">2</strong></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════
+       Section 3 : Slides
+       ════════════════════════════════════════════════════════ -->
+  <section id="slides-section" class="section" aria-label="Presentation Slides">
+    <div class="section-header">
+      <h2>Presentation Slides</h2>
+      <p>5-slide deck covering the algorithm, DP matrix, complexity, and real-world impact.</p>
+    </div>
+
+    <div class="slide-container">
+      <div class="slide-window" role="region" aria-label="Slide content">
+        <p id="slide-title"></p>
+        <h2 id="slide-subtitle"></h2>
+        <div id="slide-body"></div>
+      </div>
+
+      <!-- navigation -->
+      <div class="slide-nav" role="navigation" aria-label="Slide navigation">
+        <button id="btn-prev" class="btn-slide" aria-label="Previous slide">‹</button>
+        <div id="slide-dots" role="tablist" aria-label="Slide dots"></div>
+        <span id="slide-counter" aria-live="polite"></span>
+        <button id="btn-next" class="btn-slide" aria-label="Next slide">›</button>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ── Footer ─────────────────────────────────────────────── -->
+<footer>
+  <p>
+    <strong>Intelligent Spell-Checker</strong> ·
+    String Editing / Edit Distance ·
+    <em>Dynamic Programming (DAA Unit 4)</em>
+  </p>
+  <p style="margin-top:.4rem;">
+    Costs: Insertion&nbsp;=&nbsp;1 · Deletion&nbsp;=&nbsp;1 · Substitution&nbsp;=&nbsp;2 ·
+    Time&nbsp;O(m×n) · Space&nbsp;O(m×n)
+  </p>
+</footer>
+
+<!-- ── Scripts ─────────────────────────────────────────────── -->
+<script src="js/dictionary.js"></script>
+<script src="js/spell-checker.js"></script>
+<script src="js/dp-visualizer.js"></script>
+<script src="js/slides.js"></script>
+<script src="js/app.js"></script>
+
+</body>
+</html>
